@@ -2,28 +2,47 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const dbclient = require('pg').Client;
+const random_name = require('node-random-name');
 
 const credentials = {
-  user: process.env.dbuser,
-  host: process.env.dbhost,
+  user: process.env.DBUSER,
+  host: process.env.DBHOST,
   database: "postgres",
-  password: process.env.dbpwd,
+  password: process.env.DBPWD,
   port: 5432,
 };
 
-async function getDbclient() {
+//I do this intentionally on every request to show that RDS proxy will not generate a new DB connection for each request
+async function getDbclient(query) {
   const client = new dbclient(credentials);
   await client.connect();
-  const now = await client.query("SELECT NOW()");
+  const now = await client.query(query);
   await client.end();
   return now;
 }
 
 app.get('/', async (req, res) => {
-  const clientResult = await getDbclient();
-  console.log(clientResult);
+  const clientResult = await getDbclient('SELECT NOW()');
   res.send('Hello World! ' + clientResult.rows[0]["now"]);
 });
+
+app.get('/list', async (req, res) => {
+  await listPersonas(res)
+});
+
+app.get('/add', async (req, res) => {
+  const clientResult = await getDbclient("INSERT INTO public.personas (id, name) VALUES( nextval('pkid'), '" + random_name({first: true}) + "');");
+  if(clientResult.rowCount > 0){
+    await listPersonas(res);
+  } else {
+    res.send('Failed! ' + clientResult);
+  }
+});
+
+async function listPersonas(res){
+  const clientResult = await getDbclient('SELECT * FROM public.personas');
+  res.send('List: ' + JSON.stringify(clientResult.rows));
+}
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);

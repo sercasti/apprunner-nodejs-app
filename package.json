@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "express": "^4.17.1",
+    "node-random-name": "^1.0.1",
     "pg": "^8.7.3"
   },
   "author": "",
