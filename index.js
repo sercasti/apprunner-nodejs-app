@@ -1,9 +1,28 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+const dbclient = require("pg");
+
+const credentials = {
+  user: process.env.dbuser,
+  host: process.env.dbhost,
+  database: "postgres",
+  password: process.env.dbpwd,
+  port: 5432,
+};
+
+async function getDbclient() {
+  const client = new dbclient(credentials);
+  await client.connect();
+  const now = await client.query("SELECT NOW()");
+  await client.end();
+  return now;
+}
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+  const clientResult = await getDbclient();
+  console.log("Time with client: " + clientResult.rows[0]["now"]);
+  res.send('Hello World! ' + clientResult.rows[0]["now"]);
 });
 
 app.listen(port, () => {
