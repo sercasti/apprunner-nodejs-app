@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 3000;
-const dbclient = require("pg");
+const dbclient = require('pg').Client;
 
 const credentials = {
   user: process.env.dbuser,
@@ -19,9 +19,9 @@ async function getDbclient() {
   return now;
 }
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
   const clientResult = await getDbclient();
-  console.log("Time with client: " + clientResult.rows[0]["now"]);
+  console.log(clientResult);
   res.send('Hello World! ' + clientResult.rows[0]["now"]);
 });
 
