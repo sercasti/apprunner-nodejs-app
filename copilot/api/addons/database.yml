@@ -1,0 +1,91 @@
+# You can use any of these parameters to create conditions or mappings in your template.
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name.
+  Env:
+    Type: String
+    Description: The environment name your service, job, or workflow is being deployed to.
+  Name:
+    Type: String
+    Description: The name of the service, job, or workflow being deployed.
+
+Resources:
+  
+  AuroraDBCluster:
+    Type: AWS::RDS::DBCluster
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Properties:
+      Engine: aurora-postgresql
+      EngineVersion: '13.4'
+      Port: '5432'
+      DatabaseName: 'postgres'
+      MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref AuroraMasterSecret, ':SecretString:username}}' ]]
+      MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref AuroraMasterSecret, ':SecretString:password}}' ]]
+      VpcSecurityGroupIds:
+        - !Ref ClusterSecurityGroup  
+      DBSubnetGroupName: !Ref DBSubnetGroup
+
+  ClusterSecurityGroup:
+    Type: 'AWS::EC2::SecurityGroup'
+    Properties:
+      GroupDescription: Enable Web Ports Ingress
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: 0.0.0.0/0
+      VpcId: { 'Fn::ImportValue': !Sub '${App}-${Env}-VpcId' }
+
+  DBSubnetGroup:
+    Type: 'AWS::RDS::DBSubnetGroup'
+    Properties:
+      DBSubnetGroupDescription: !Ref 'AWS::StackName'
+      SubnetIds: !Split [ ',', { 'Fn::ImportValue': !Sub '${App}-${Env}-PublicSubnets' } ]
+
+  AuroraDBFirstInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceClass: db.r6g.xlarge
+      DBClusterIdentifier: !Ref AuroraDBCluster  
+      Engine: aurora-postgresql
+      PubliclyAccessible: true
+      EnablePerformanceInsights: true
+
+
+## Database credentials generated via Secrets manager
+  AuroraMasterSecret:
+    Metadata:
+      'aws:copilot:description': 'A Secrets Manager secret to store your DB credentials'
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Join [ '/', [ !Ref App, !Ref Env, !Ref Name, 'aurora-pg' ] ]
+      Description: !Join [ '', [ 'Aurora PostgreSQL Master User Secret ', 'for CloudFormation Stack ', !Ref 'AWS::StackName' ] ]
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "postgres"}'
+        GenerateStringKey: "password"
+        ExcludeCharacters: '"@/\'
+        PasswordLength: 16
+
+  SecretAuroraClusterAttachment:
+    Type: AWS::SecretsManager::SecretTargetAttachment
+    Properties:
+      SecretId: !Ref AuroraMasterSecret
+      TargetId: !Ref AuroraDBCluster
+      TargetType: AWS::RDS::DBCluster
+
+#TODO Rds proxy
+
+Outputs:
+  dbuser: # injected as DBUSER environment variable by Copilot.
+    Description: 'The secret user.'
+    Value: !Join ['', ['{{resolve:secretsmanager:', !Ref AuroraMasterSecret, ':SecretString:username}}' ]]
+
+  dbpwd: # injected as DBPWD environment variable by Copilot.
+    Description: 'The secret password.'
+    Value: !Join ['', ['{{resolve:secretsmanager:', !Ref AuroraMasterSecret, ':SecretString:password}}' ]]
+
+  dbhost: # injected as DBHOST environment variable by Copilot.
+    Description: 'The connection endpoint for the DB cluster.'
+    Value: !GetAtt 'AuroraDBCluster.Endpoint.Address'

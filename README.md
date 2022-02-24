@@ -24,9 +24,7 @@ DBHOST=databaseHost
 
 ```shell
 $copilot init --app demo                      \
-  --name api                                 \
-  --type 'Load Balanced Web Service'         \
-  --dockerfile './Dockerfile'                \
-  --port 80                                  \
+  --name api                                  \
+  --type 'Load Balanced Web Service'          \
   --deploy
 ```
