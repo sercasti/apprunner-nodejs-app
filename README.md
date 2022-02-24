@@ -17,7 +17,7 @@ $ aws cloudformation deploy \
   --capabilities CAPABILITY_IAM
 ```
 
-Create envariables.env file on the root of this project:
+Create envariables.env file on the root of this project, the file *must* use UTF-8 encoding:
 DBUSER=databaseUsername
 DBPWD=databasePassword
 DBHOST=databaseHost
