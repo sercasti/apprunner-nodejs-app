@@ -18,6 +18,7 @@ async function initializeDatabase() {
   console.log("DBHOST " + credentials.host);
   console.log("DBUSER " + credentials.user);
   await getDbclient(`CREATE TABLE if not exists public.personas (id int4 NOT NULL, "name" varchar NULL, CONSTRAINT personas_pk PRIMARY KEY (id));`);
+  await getDbclient(`CREATE SEQUENCE if not exists public.pkid INCREMENT BY 1 MINVALUE 100 MAXVALUE 9223372036854775807 START 100 CACHE 1 NO CYCLE;`);
 }
 
 //I do this intentionally on every request to show that RDS proxy will not generate a new DB connection for each request
