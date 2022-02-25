@@ -138,21 +138,3 @@ Resources:
                   StringEquals:
                     kms:ViaService: !Sub 'secretsmanager.${AWS::Region}.amazonaws.com'
     DependsOn: AuroraMasterSecret
-
-Outputs:
-  dbuser: # injected as DBUSER environment variable by Copilot.
-    Description: 'The secret user.'
-    Value: !Join ['', ['{{resolve:secretsmanager:', !Ref AuroraMasterSecret, ':SecretString:username}}' ]]
-
-  dbpwd: # injected as DBPWD environment variable by Copilot.
-    Description: 'The secret password.'
-    Value: !Join ['', ['{{resolve:secretsmanager:', !Ref AuroraMasterSecret, ':SecretString:password}}' ]]
-
-  dbaurora: # injected as DBAURORA environment variable by Copilot.
-    Description: 'The connection endpoint for the DB cluster.'
-    Value: !GetAtt 'AuroraDBCluster.Endpoint.Address'
-
-  dbhost: # injected as DBHOST environment variable by Copilot.
-    Description: 'The proxy connection pool endpoint.'
-    Value: !GetAtt 'DBProxy.Endpoint'
-  
