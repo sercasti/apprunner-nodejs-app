@@ -26,16 +26,10 @@ memory: 4096    # Amount of memory in MiB used by the task.
 count: 1       # Number of tasks that should be running in your service.
 exec: true     # Enable running commands in your container.
 
-# Optional fields for more advanced use-cases.
-#
-#variables:                    # Pass environment variables as key value pairs.
-#  LOG_LEVEL: info
-env_file: envariables.env
-
-#secrets:                      # Pass secrets from AWS Systems Manager (SSM) Parameter Store.
-#  GITHUB_TOKEN: GITHUB_TOKEN  # The key is the name of the environment variable, the value is the name of the SSM parameter.
-
-# You can override any of the values defined above by environment.
-#environments:
-#  test:
-#    count: 2               # Number of tasks to run for the "test" environment.
+secrets: # Grab secrets created by the cloudformation script from AWS Secrets Manager and set them as env vars
+  DBUSER:
+    secretsmanager: 'demo/test/api/aurora-pg:username::'
+  DBPWD:
+    secretsmanager: 'demo/test/api/aurora-pg:password::'
+  DBHOST:
+    secretsmanager: 'demo/test/api/aurora-pg:host::' 
