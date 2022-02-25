@@ -13,6 +13,8 @@ Parameters:
 Resources:
   
   AuroraDBCluster:
+    Metadata: 
+      'aws:copilot:description': 'The Aurora database cluster'
     Type: AWS::RDS::DBCluster
     DeletionPolicy: Snapshot
     UpdateReplacePolicy: Snapshot
