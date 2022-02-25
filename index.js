@@ -12,6 +12,14 @@ const credentials = {
   port: 5432,
 };
 
+initializeDatabase();
+
+async function initializeDatabase() {
+  console.log("DBHOST " + credentials.host);
+  console.log("DBUSER " + credentials.user);
+  await getDbclient(`CREATE TABLE if not exists public.personas (id int4 NOT NULL, "name" varchar NULL, CONSTRAINT personas_pk PRIMARY KEY (id));`);
+}
+
 //I do this intentionally on every request to show that RDS proxy will not generate a new DB connection for each request
 async function getDbclient(query) {
   const client = new dbclient(credentials);
