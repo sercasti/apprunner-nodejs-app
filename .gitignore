@@ -1,7 +1,4 @@
-Pipfile.lock
 node_modules/
 package-lock.json
 .vscode/settings.json
-env.list
-envariables.env
 copilot/.workspace
