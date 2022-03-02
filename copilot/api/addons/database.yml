@@ -138,3 +138,10 @@ Resources:
                   StringEquals:
                     kms:ViaService: !Sub 'secretsmanager.${AWS::Region}.amazonaws.com'
     DependsOn: AuroraMasterSecret
+
+## Use this line if you want to hit Aurora via RDS proxy
+## otherwise comment it out and set the DBHOST on the manifest.yml secrets
+Outputs:
+  dbhost: # injected as DBHOST environment variable by Copilot.
+    Description: 'The proxy connection pool endpoint.'
+    Value: !GetAtt 'DBProxy.Endpoint'

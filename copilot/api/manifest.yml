@@ -33,5 +33,8 @@ secrets: # Grab secrets created by the cloudformation script from AWS Secrets Ma
     secretsmanager: 'demo/test/api/aurora-pg:username::'
   DBPWD:
     secretsmanager: 'demo/test/api/aurora-pg:password::'
-  DBHOST:
-    secretsmanager: 'demo/test/api/aurora-pg:host::' 
+  ## Use this line if you want to hit Aurora directly with no proxy
+  ## otherwise comment it out and set the DBHOST on the database.yml outputs
+  ## which will use RDS Proxy for DB connection
+  ## DBHOST:
+  ##   secretsmanager: 'demo/test/api/aurora-pg:host::' 
