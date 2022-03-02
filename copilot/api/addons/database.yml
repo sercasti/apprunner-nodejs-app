@@ -78,6 +78,8 @@ Resources:
 
 ## RDS Proxy instance
   DBProxy:
+    Metadata: 
+      'aws:copilot:description': 'The RDS Proxy endpoint'
     Type: AWS::RDS::DBProxy
     Properties:
       DBProxyName: AuroraRDSProxy
@@ -91,6 +93,8 @@ Resources:
     DependsOn: AuroraMasterSecret
 
   ProxyTargetGroup: 
+    Metadata: 
+      'aws:copilot:description': 'The Target group for the RDS Proxy'
     Type: AWS::RDS::DBProxyTargetGroup
     Properties:
       DBProxyName: AuroraRDSProxy
