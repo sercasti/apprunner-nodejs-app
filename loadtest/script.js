@@ -9,18 +9,20 @@ export const options = {
   ],
 };
 
+const targetUrl = 'https://5gfwv2utec.us-east-1.awsapprunner.com'
+
 export default function () {
   const req1 = {
     method: 'GET',
-    url: 'https://5gfwv2utec.us-east-1.awsapprunner.com/list'
+    url: targetUrl + '/list'
   };
   const req2 = {
     method: 'GET',
-    url: 'https://5gfwv2utec.us-east-1.awsapprunner.com/add'  
+    url: targetUrl + '/add'
   };
   const req3 = {
     method: 'GET',
-    url: 'https://5gfwv2utec.us-east-1.awsapprunner.com/'
+    url: targetUrl
   };
   const responses = http.batch([req1, req2, req3]);
   check(responses[0], {

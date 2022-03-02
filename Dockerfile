@@ -1,5 +1,4 @@
-FROM arm64v8/node:16
-#FROM node:16 for intel based computers
+FROM node:16
 
 # Create app directory
 WORKDIR /usr/src/app
