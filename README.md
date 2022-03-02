@@ -1,7 +1,9 @@
 # aws-nodejs-app
 
 This is a sample application using nodejs runtime, to pull data from an aurora database via RDS proxy
-It can be deployed with Copilot to run with the App Runner Service, or Fargate.
+It can be deployed with Copilot to run with the App Runner Service, Fargate ARM or Fargate x86 and it includes a load testing benchmark tool.
+
+### TLDR; give me the results: https://github.com/sercasti/apprunner-nodejs-app/blob/main/BenchResults/Results.png
 
 ## AWS Copilot
 
